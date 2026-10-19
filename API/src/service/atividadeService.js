@@ -92,6 +92,7 @@ async function criar(body){
             }
         });
 
+
         return Result.sucess(201, "Atividade Criada", res);
     } catch (error) {
         console.log(error)
@@ -200,6 +201,12 @@ async function listarDisponiveis(idParticipante){
                 }
             }
         });
+
+        
+        res.map((r)=>(
+            r.dataInput = r.Data.toISOString().slice(0,10)
+        ));
+
         return Result.sucess(200,"sucesso", res)
     } catch (error) {
         console.log(error);
@@ -212,7 +219,6 @@ async function buscarComMenorAderencia(){
         let res = await db.vw_atividade_menor_aderencia.findFirst();
 
         res.totalInscritos = Number(res.totalInscritos)
-
 
         return Result.sucess(200, "buscado", res)
     } catch (error) {
