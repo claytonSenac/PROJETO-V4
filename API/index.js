@@ -6,13 +6,14 @@ import participante from './src/controllers/participante.js'
 import { db } from './src/core/dbContext.js';
 import { Result } from './src/utils/result.js';
 import cors from 'cors';
+import { atividadeService } from './src/service/atividadeService.js';
 
 const app = e();
 
 app.use(e.json());
 
 app.use(cors({
-  origin: "localhost:5173"
+  origin: "http://localhost:5173"
 }));
 
 app.listen(3000,(e) => {
@@ -27,6 +28,8 @@ app.use("/participante",participante);
 
 
 app.get("/saude", async (req,res) => {
+
+  const next = await atividadeService.listar(3);
   const totParticipantes = await db.participante.count({
     where:{
         Ativo:true
@@ -36,9 +39,16 @@ app.get("/saude", async (req,res) => {
   const totAtividades = await db.atividade.count({
     where:{
         Ativo:true,
-        Data: new Data()
+        Data: {
+          gte: new Date()
+        }
     }
   });
 
-  res.status(200).json(Result.sucess(200, "sucesso", {participantes: totParticipantes, atividades: totAtividades}));
+  const menorAderencia = await atividadeService.buscarComMenorAderencia()
+
+  res.status(200).json(Result.sucess(200, "sucesso", {
+    participantes: totParticipantes, atividades: totAtividades, proximas:next.data,
+    menorAderencia: menorAderencia.data
+  }));
 });

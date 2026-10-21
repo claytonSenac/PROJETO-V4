@@ -39,6 +39,21 @@ r.post("/cancelarInscricao/:id", async (req,res) => {
   res.status(result.code).json(result)
 });
 
+r.post("/redefinirSenha/:id", async (req,res) => {
+  const {id} = req.params;
+
+  const result = await participanteService.redefinirSenha(id);
+  
+  res.status(result.code).json(result)
+});
+
+r.put("/editar/admin/:id", async (req,res) => {
+  const {data} = req.body;
+  const {id} = req.params;
+  const result = await participanteService.editarAdmin(data,id);
+  
+  res.status(result.code).json(result)
+});
 
 r.put("/editar/:id", async (req,res) => {
   const {data} = req.body;
